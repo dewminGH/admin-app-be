@@ -4,3 +4,8 @@ export interface IUser {
     email: string;
     password: string;
 }
+
+export interface IConfirmData {
+    email: string;
+    code: string;
+}

@@ -2,10 +2,6 @@ import { userSignUp } from 'src/services/auth';
 
 export const register = async (event) => {
     const requestBody = JSON.parse(event.body);
-    console.log('event', event);
-    console.log('event.body', requestBody);
-    console.log('event.body', requestBody.password);
-
     try {
         const result = await userSignUp(requestBody);
         return {
