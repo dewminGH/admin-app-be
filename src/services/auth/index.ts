@@ -1,5 +1,5 @@
-import { IConfirmData, IUser } from './types';
 import * as AWS from 'aws-sdk';
+import { IConfirmData, IUser } from './types';
 import { CognitoUserAttribute } from 'amazon-cognito-identity-js';
 
 const cognitoIdentityServiceProvider = new AWS.CognitoIdentityServiceProvider({
@@ -11,6 +11,7 @@ const getAttributes = (user: IUser) => {
     return [
         new CognitoUserAttribute({ Name: 'email', Value: user.email }),
         new CognitoUserAttribute({ Name: 'name', Value: user.Name }),
+        new CognitoUserAttribute({ Name: 'profile', Value: user.profile }),
     ];
 };
 

@@ -1,8 +1,9 @@
 export interface IUser {
     Name: string;
-    phoneNumber?: string;
     email: string;
     password: string;
+    profile: string;
+    phoneNumber?: string;
 }
 
 export interface IConfirmData {
