@@ -1,12 +1,21 @@
 export interface IUser {
-    Name: string;
-    email: string;
+    name: string;
+    username: string;
     password: string;
     profile: string;
     phoneNumber?: string;
 }
 
 export interface IConfirmData {
-    email: string;
+    username: string;
     code: string;
+}
+
+export interface IUserData {
+    username: string;
+    password: string;
+}
+
+export interface IGetNewTokens {
+    refreshToken: string;
 }

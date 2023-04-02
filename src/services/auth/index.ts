@@ -1,16 +1,17 @@
 import * as AWS from 'aws-sdk';
-import { IConfirmData, IUser } from './types';
+import { IConfirmData, IGetNewTokens, IUser, IUserData } from './types';
 import { CognitoUserAttribute } from 'amazon-cognito-identity-js';
 
+/*configure region*/
 const cognitoIdentityServiceProvider = new AWS.CognitoIdentityServiceProvider({
     region: 'ap-south-1',
 });
 
-/*configure region*/
+/*create user attribute helper*/
 const getAttributes = (user: IUser) => {
     return [
-        new CognitoUserAttribute({ Name: 'email', Value: user.email }),
-        new CognitoUserAttribute({ Name: 'name', Value: user.Name }),
+        new CognitoUserAttribute({ Name: 'email', Value: user.username }),
+        new CognitoUserAttribute({ Name: 'name', Value: user.name }),
         new CognitoUserAttribute({ Name: 'profile', Value: user.profile }),
     ];
 };
@@ -21,7 +22,7 @@ export const userSignUp = async (user: IUser) => {
         const authParams = {
             ClientId: process.env.CLIENT_ID,
             Password: user.password,
-            Username: user.email,
+            Username: user.username,
             UserAttributes: getAttributes(user),
         };
 
@@ -32,11 +33,11 @@ export const userSignUp = async (user: IUser) => {
     }
 };
 
-const getUserByEmail = async (email: string) => {
+const getUserByEmail = async (username: string) => {
     try {
         const params = {
             UserPoolId: process.env.USER_POOL_ID,
-            Filter: `email = \"${email}\"`,
+            Filter: `email = \"${username}\"`,
         };
         const data = await cognitoIdentityServiceProvider.listUsers(params).promise();
         return data.Users[0];
@@ -47,15 +48,74 @@ const getUserByEmail = async (email: string) => {
 
 /*confirm sign up helper*/
 export const confirmUserRegister = async (confirmData: IConfirmData) => {
-    const user = await getUserByEmail(confirmData.email);
-    const params = {
-        ClientId: process.env.CLIENT_ID,
-        Username: user.Username,
-        ConfirmationCode: confirmData.code,
-    };
-    if (user.UserStatus === 'UNCONFIRMED') {
-        await cognitoIdentityServiceProvider.confirmSignUp(params).promise();
-        return 'account activated';
+    try {
+        const user = await getUserByEmail(confirmData.username);
+        const params = {
+            ClientId: process.env.CLIENT_ID,
+            Username: user.Username,
+            ConfirmationCode: confirmData.code,
+        };
+        if (user.UserStatus === 'UNCONFIRMED') {
+            await cognitoIdentityServiceProvider.confirmSignUp(params).promise();
+            return 'account activated';
+        }
+        return 'failed to activate account';
+    } catch (err: any) {
+        throw err;
     }
-    return 'already account activated';
+};
+
+/*User SignIn user helper*/
+export const userSignIn = async (userData: IUserData) => {
+    try {
+        const params = {
+            AuthFlow: 'USER_PASSWORD_AUTH',
+            ClientId: process.env.CLIENT_ID,
+            AuthParameters: {
+                USERNAME: userData.username,
+                PASSWORD: userData.password,
+            },
+        };
+
+        const data = await new Promise((resolve, reject) => {
+            cognitoIdentityServiceProvider.initiateAuth(params, function (err, data) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(data.AuthenticationResult);
+                }
+            });
+        });
+        return data;
+    } catch (err: any) {
+        throw err;
+    }
+};
+
+/*token refresh helper*/
+export const userGetNewTokens = async (tokenData: IGetNewTokens) => {
+    try {
+        const params = {
+            AuthFlow: 'REFRESH_TOKEN_AUTH',
+            ClientId: process.env.CLIENT_ID,
+            AuthParameters: {
+                REFRESH_TOKEN: tokenData.refreshToken,
+            },
+            ClientMetadata: {
+                REFRESH_TOKEN: tokenData.refreshToken,
+            },
+        };
+        const data = await new Promise((resolve, reject) => {
+            cognitoIdentityServiceProvider.initiateAuth(params, function (err, data) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(data);
+                }
+            });
+        });
+        return data;
+    } catch (err: any) {
+        throw err;
+    }
 };
