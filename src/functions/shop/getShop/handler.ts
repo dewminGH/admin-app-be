@@ -5,15 +5,22 @@ export const getShop = async () => {
         const response = await getShopItems();
         return {
             statusCode: 200,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+            },
             body: JSON.stringify({
+                message: 'fetch done',
                 response: response,
             }),
         };
     } catch (error) {
         return {
             statusCode: 401,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+            },
             body: JSON.stringify({
-                response: 'fetch error',
+                message: 'fetch error',
             }),
         };
     }

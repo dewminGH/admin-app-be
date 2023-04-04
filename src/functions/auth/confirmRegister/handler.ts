@@ -7,15 +7,22 @@ export const confirmRegister = async (event) => {
         const response = await confirmUserRegister(requestBody);
         return {
             statusCode: 200,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+            },
             body: JSON.stringify({
+                message: 'confirmation successful',
                 response: response,
             }),
         };
     } catch (error) {
         return {
             statusCode: 401,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+            },
             body: JSON.stringify({
-                response: 'cod not valid',
+                message: 'confirmation fail',
             }),
         };
     }

@@ -7,6 +7,9 @@ export const login = async (event) => {
         const response = await userSignIn(requestBody);
         return {
             statusCode: 200,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+            },
             body: JSON.stringify({
                 message: 'login successful',
                 response: response,
@@ -15,8 +18,11 @@ export const login = async (event) => {
     } catch (err) {
         return {
             statusCode: 401,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+            },
             body: JSON.stringify({
-                response: 'check password and username',
+                message: 'check password and username',
             }),
         };
     }
