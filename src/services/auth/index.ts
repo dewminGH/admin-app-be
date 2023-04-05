@@ -1,5 +1,5 @@
 import * as AWS from 'aws-sdk';
-import { IConfirmData, IGetNewTokens, IUser, IUserData } from './types';
+import { IConfirmData, IGetNewTokens, IGetUser, IUser, IUserData } from './types';
 import { CognitoUserAttribute } from 'amazon-cognito-identity-js';
 
 /*configure region*/
@@ -28,8 +28,8 @@ export const userSignUp = async (user: IUser) => {
 
         const authData = await cognitoIdentityServiceProvider.signUp(authParams).promise();
         return authData;
-    } catch (error: any) {
-        throw error;
+    } catch (err: any) {
+        throw err;
     }
 };
 
@@ -41,8 +41,8 @@ const getUserByEmail = async (username: string) => {
         };
         const data = await cognitoIdentityServiceProvider.listUsers(params).promise();
         return data.Users[0];
-    } catch (error) {
-        throw error;
+    } catch (err) {
+        throw err;
     }
 };
 
@@ -107,6 +107,27 @@ export const userGetNewTokens = async (tokenData: IGetNewTokens) => {
         };
         const data = await new Promise((resolve, reject) => {
             cognitoIdentityServiceProvider.initiateAuth(params, function (err, data) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(data);
+                }
+            });
+        });
+        return data;
+    } catch (err: any) {
+        throw err;
+    }
+};
+
+/*get current helper*/
+export const getUserDetails = async (tokenData: IGetUser) => {
+    try {
+        var params = {
+            AccessToken: tokenData.accessToken,
+        };
+        const data = await new Promise((resolve, reject) => {
+            cognitoIdentityServiceProvider.getUser(params, (err, data) => {
                 if (err) {
                     reject(err);
                 } else {

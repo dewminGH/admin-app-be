@@ -19,3 +19,7 @@ export interface IUserData {
 export interface IGetNewTokens {
     refreshToken: string;
 }
+
+export interface IGetUser {
+    accessToken: string;
+}
