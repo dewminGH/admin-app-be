@@ -23,3 +23,7 @@ export interface IGetNewTokens {
 export interface IGetUser {
     accessToken: string;
 }
+
+export interface IDeleteUser {
+    accessToken: string;
+}
