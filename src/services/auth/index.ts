@@ -1,5 +1,5 @@
 import * as AWS from 'aws-sdk';
-import { IConfirmData, IGetNewTokens, IGetUser, IUser, IUserData } from './types';
+import { IConfirmData, IDeleteUser, IGetNewTokens, IGetUser, IUser, IUserData } from './types';
 import { CognitoUserAttribute } from 'amazon-cognito-identity-js';
 
 /*configure region*/
@@ -128,6 +128,27 @@ export const getUserDetails = async (tokenData: IGetUser) => {
         };
         const data = await new Promise((resolve, reject) => {
             cognitoIdentityServiceProvider.getUser(params, (err, data) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(data);
+                }
+            });
+        });
+        return data;
+    } catch (err: any) {
+        throw err;
+    }
+};
+
+/*get delete helper*/
+export const setDeleteUser = async (tokenData: IDeleteUser) => {
+    try {
+        var params = {
+            AccessToken: tokenData.accessToken,
+        };
+        const data = await new Promise((resolve, reject) => {
+            cognitoIdentityServiceProvider.deleteUser(params, (err, data) => {
                 if (err) {
                     reject(err);
                 } else {
