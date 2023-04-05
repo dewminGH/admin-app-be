@@ -6,15 +6,21 @@ export const saveItem = async (event) => {
         await saveShopItem(requestBody);
         return {
             statusCode: 200,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+            },
             body: JSON.stringify({
-                response: 'item successfully saved',
+                message: 'item successfully saved',
             }),
         };
     } catch (error) {
         return {
             statusCode: 401,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+            },
             body: JSON.stringify({
-                response: 'fetch error',
+                message: 'fetch error',
             }),
         };
     }

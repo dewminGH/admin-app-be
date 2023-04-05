@@ -7,15 +7,22 @@ export const getNewTokens = async (event) => {
         const response = await userGetNewTokens(requestBody);
         return {
             statusCode: 200,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+            },
             body: JSON.stringify({
+                message: 'authorized',
                 response: response,
             }),
         };
     } catch (err: any) {
         return {
             statusCode: 401,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+            },
             body: JSON.stringify({
-                response: 'not authorized',
+                message: 'not authorized',
             }),
         };
     }
