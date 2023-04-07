@@ -10,3 +10,6 @@ export { default as deleteUser } from './auth/deleteUser';
 export { default as getShop } from './shop/getShop';
 export { default as removeItem } from './shop/removeItem';
 export { default as saveItem } from './shop/saveItem';
+
+/*customer management*/
+export { default as getUserInventory } from './customer/getCustomerInventory';
